@@ -10,29 +10,53 @@ services:
       - "80:80/tcp"
       - "443:443/tcp"
 
-  pihole:
-    container_name: pihole
-    image: pihole/pihole:latest
+
+  adguard:
+    container_name: adguard
+    image: adguard/adguardhome:latest
     ports:
       - "53:53/tcp"
       - "53:53/udp"
       - "67:67/udp"
+      - "1068:68/tcp"
+      - "1068:68/udp"
       - "8080:80/tcp"
       - "8443:443/tcp"
-    environment:
-      TZ: 'America/Los_Angeles'
-      WEBPASSWORD: Something
-    # Volumes store your data between container upgrades
-    volumes:
-      - './etc-pihole/:/etc/pihole/'
-      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
-    dns:
-      - 127.0.0.1
-      - 1.1.1.1
-#    network_mode: host
-# Recommended but not required (DHCP needs NET_ADMIN)
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+      - "853:853/tcp"
+      - "3000:3000/tcp"
     cap_add:
       - NET_ADMIN
+    environment:
+      - TZ=America/Los_Angeles
     restart: unless-stopped
+    volumes:
+      - ./adguard/work:/opt/adguardhome/work
+      - ./adguard/conf:/opt/adguardhome/conf
+      #- ./adguard/hosts:/etc/hosts
 
+
+#   pihole:
+#     container_name: pihole
+#     image: pihole/pihole:latest
+#     ports:
+#       - "53:53/tcp"
+#       - "53:53/udp"
+#       - "67:67/udp"
+#       - "8080:80/tcp"
+#       - "8443:443/tcp"
+#     environment:
+#       TZ: 'America/Los_Angeles'
+#       WEBPASSWORD: Something
+#     # Volumes store your data between container upgrades
+#     volumes:
+#       - './etc-pihole/:/etc/pihole/'
+#       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+#     dns:
+#       - 127.0.0.1
+#       - 1.1.1.1
+# #    network_mode: host
+# # Recommended but not required (DHCP needs NET_ADMIN)
+#     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+#     cap_add:
+#       - NET_ADMIN
+#     restart: unless-stopped
